@@ -66,7 +66,7 @@ function Menu({ menu, agregarPlato, editarPlato, eliminarPlato }) {
             <div>
               <label htmlFor="precio" className="block text-sm font-medium text-gray-700">Precio</label>
               <input
-                type="number"
+                type="text"
                 id="precio"
                 value={nuevoPlato.precio}
                 onChange={(e) => {
@@ -159,3 +159,4 @@ function Menu({ menu, agregarPlato, editarPlato, eliminarPlato }) {
 }
 
 export default Menu;
+
