@@ -30,7 +30,7 @@ function Sidebar({ isOpen, setVista, vista, toggleSidebar }) {
   const sidebarContent = (
     <div className="h-full flex flex-col">
       <div className="flex items-center justify-between h-16 px-4">
-        <span className="text-2xl font-semibold text-white">Sirius Beta</span>
+        <span className="text-2xl font-semibold text-white">GastroLogic</span>
         <button
           onClick={toggleSidebar}
           className="text-gray-400 hover:text-white focus:outline-none lg:hidden"

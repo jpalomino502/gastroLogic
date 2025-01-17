@@ -14,7 +14,7 @@ function Header({ toggleSidebar }) {
               <MenuIcon className="h-6 w-6" />
             </button>
             <h1 className="text-xl mt-1 font-semibold text-white">
-              Sirus BETA
+              GastroLogic
             </h1>
           </div>
         </div>
