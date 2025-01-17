@@ -3,7 +3,7 @@ import { MenuIcon } from "./Icons";
 
 function Header({ toggleSidebar }) {
   return (
-    <header className="bg-black shadow-md lg:hidden">
+    <header className="bg-zinc-900 shadow-md lg:hidden">
       <div className="max-w-7xl mx-auto px-4 lg:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4 md:justify-start md:space-x-10">
           <div className="flex justify-start lg:w-0 lg:flex-1">

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Toaster } from "react-hot-toast";
-import { MenuIcon } from "./components/Icons";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
 import Resumen from "./pages/Resumen";
@@ -102,39 +101,17 @@ function App() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100 text-gray-900 md:flex-row">
-      <AnimatePresence>
-        {isSidebarOpen && (
-          <motion.div
-            key="sidebar"
-            initial={{ x: "-100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "-100%" }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-50  md:hidden"
-            onClick={toggleSidebar}
-          >
-            <Sidebar
-              isOpen={isSidebarOpen}
-              setVista={setVista}
-              vista={vista}
-              toggleSidebar={toggleSidebar}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
+    <div className="flex h-screen bg-zinc-900 text-gray-900">
       <Sidebar
         isOpen={isSidebarOpen}
         setVista={setVista}
         vista={vista}
         toggleSidebar={toggleSidebar}
+        setIsSidebarOpen={setIsSidebarOpen}
       />
-
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Header toggleSidebar={toggleSidebar} />
-
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-4">
+      <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ${isSidebarOpen ? 'lg:ml-64' : 'lg:ml-20'}`}>
+        <Header toggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
+        <main className="no-scrollbar overflow-auto flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 py-4 rounded-2xl mb-4 lg: lg:my-4 mr-4 ml-4 lg:ml-0">
           <AnimatePresence mode="wait">
             <motion.div
               key={vista}
@@ -179,3 +156,4 @@ function App() {
 }
 
 export default App;
+
