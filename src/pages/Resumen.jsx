@@ -214,7 +214,7 @@ return (
     </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-7 gap-4 md:gap-6">
-        <div className="lg:col-span-4 bg-white rounded-xl border border-gray-100 shadow-sm p-4 md:p-6">
+        <div className="lg:col-span-4 bg-white rounded-xl">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
             <h2 className="text-2xl md:text-3xl font-semibold text-zinc-900">Últimos Pedidos</h2>
             <div className="flex flex-wrap items-center gap-2 md:gap-3">
@@ -242,19 +242,19 @@ return (
             <table className="min-w-full">
               <thead>
                 <tr className="border-b border-gray-100">
-                  <th className="px-4 py-3 text-left text-xs font-medium text-zinc-900 uppercase tracking-wider">Nº</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-zinc-900 uppercase tracking-wider">Mesa/Domicilio</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-zinc-900 uppercase tracking-wider">Estado</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-zinc-900 uppercase tracking-wider">Total</th>
+                  <th className="pr-4 py-3 text-left text-xs font-medium text-zinc-900 uppercase tracking-wider">Nº</th>
+                  <th className="pr-4 py-3 text-left text-xs font-medium text-zinc-900 uppercase tracking-wider">Mesa/Domicilio</th>
+                  <th className="pr-4 py-3 text-left text-xs font-medium text-zinc-900 uppercase tracking-wider">Estado</th>
+                  <th className="pr-4 py-3 text-left text-xs font-medium text-zinc-900 uppercase tracking-wider">Total</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {filteredOrdersComandas.slice(-5).reverse().map((comanda) => (
                   <tr key={comanda.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-4 py-4 whitespace-nowrap text-sm zinc-900">
+                    <td className="pr-4 py-4 whitespace-nowrap text-sm zinc-900">
                       #{comanda.numeroComanda}
                     </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm zinc-900">
+                    <td className="pr-4 py-4 whitespace-nowrap text-sm zinc-900">
                       {comanda.esDomicilio ? `Domicilio: ${comanda.direccion}` : `Mesa: ${comanda.mesa}`}
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap">
