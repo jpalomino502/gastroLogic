@@ -350,7 +350,7 @@ const ModernDashboard = ({ comandas, ganancias }) => {
             </table>
           </div>
         </div>
-        <div className="lg:col-span-3 bg-white rounded-3xl p-4">
+        <div className="lg:col-span-3 bg-white rounded-3xl">
   <div className="p-4 bg-[#0a0104] rounded-3xl h-full flex justify-center items-center">
     <p className="text-white text-xl font-semibold text-center">
       🚀 <span className="text-lg">¡Próximamente!</span> ⏳ <br />
