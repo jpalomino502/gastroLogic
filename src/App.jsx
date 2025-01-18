@@ -111,7 +111,7 @@ function App() {
       />
       <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ${isSidebarOpen ? 'lg:ml-64' : 'lg:ml-20'}`}>
         <Header toggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
-        <main className="no-scrollbar overflow-auto flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 py-4 rounded-2xl mb-4 lg: lg:my-4 mr-4 ml-4 lg:ml-0">
+        <main className="no-scrollbar overflow-auto flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-4 lg:rounded-2xl  lg:my-4 lg:mr-4">
           <AnimatePresence mode="wait">
             <motion.div
               key={vista}

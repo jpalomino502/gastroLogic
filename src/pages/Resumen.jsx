@@ -60,16 +60,16 @@ const EnhancedDashboard = ({ comandas, ganancias }) => {
   }));
 
   const formatPrice = (price) => {
-    return new Intl.NumberFormat('es-ES', { 
+    return new Intl.NumberFormat('es-CO', { 
       style: 'currency', 
-      currency: 'EUR',
+      currency: 'COP',
       minimumFractionDigits: 2
     }).format(price);
   };
 
   return (
     <div className="bg-gray-100 min-h-screen p-8">
-      <h1 className="text-4xl font-bold text-gray-800 mb-8">Dashboard de Restaurante</h1>
+      <h1 className="text-4xl font-bold text-gray-800 mb-8">Resumen</h1>
       
       <div className="mb-6">
         <label htmlFor="timeRange" className="mr-2 font-semibold">Rango de tiempo:</label>
