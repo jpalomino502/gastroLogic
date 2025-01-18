@@ -133,7 +133,7 @@ function Menu({ menu, agregarPlato, editarPlato, eliminarPlato }) {
   };
 
   return (
-    <div className="space-y-6 p-4 sm:p-6 md:p-8 max-w-7xl mx-auto">
+    <div className="min-h-screen p-4 md:p-8">
       <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-zinc-900 mb-4 sm:mb-6 md:mb-8">
         Gestión del Menú 🍕
       </h1>
@@ -148,7 +148,7 @@ function Menu({ menu, agregarPlato, editarPlato, eliminarPlato }) {
             initial="hidden"
             animate="visible"
             transition={{ duration: 0.3, delay: 0.2 }}
-            className="bg-[#e4f4ff] rounded-xl border border-gray-100 shadow-sm p-6 sm:p-8 overflow-y-auto"
+            className="bg-[#e4f4ff] rounded-3xl border border-gray-100 shadow-sm p-6 sm:p-8 overflow-y-auto"
           >
             <div className="mb-4 sm:mb-6">
               <label
@@ -177,7 +177,7 @@ function Menu({ menu, agregarPlato, editarPlato, eliminarPlato }) {
                   onClick={() =>
                     setSortOrder(sortOrder === "asc" ? "desc" : "asc")
                   }
-                  className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-zinc-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-zinc-700 hover: focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
                   <ArrowUpDown className="mr-2 h-5 w-5" />
                   Ordenar por Precio (
@@ -270,7 +270,7 @@ function Menu({ menu, agregarPlato, editarPlato, eliminarPlato }) {
             initial="hidden"
             animate="visible"
             transition={{ duration: 0.3 }}
-            className="bg-[#e8dcec] rounded-xl border border-gray-100 shadow-sm p-8"
+            className="bg-[#e8dcec] rounded-3xl border border-gray-100 shadow-sm p-8"
           >
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
