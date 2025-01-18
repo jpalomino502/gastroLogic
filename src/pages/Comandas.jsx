@@ -67,7 +67,8 @@ function Comandas({ menu, agregarComanda, comandas = [] }) {
 
   return (
     <div className="space-y-6 p-4 md:p-8">
-      <h1 className="text-3xl md:text-4xl font-bold text-zinc-900 mb-6 md:mb-8">Gestión de Comandas</h1>
+            <h1 className="text-3xl md:text-4xl font-bold text-zinc-900 mb-6 md:mb-8">
+            Gestión de Comandas 📑</h1>
       
       <div className="flex space-x-4 mb-6">
         <button

@@ -134,8 +134,8 @@ function Menu({ menu, agregarPlato, editarPlato, eliminarPlato }) {
 
   return (
     <div className="min-h-screen p-4 md:p-8">
-      <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-zinc-900 mb-4 sm:mb-6 md:mb-8">
-        Gestión del Menú 🍕
+      <h1 className="text-3xl md:text-4xl font-bold text-zinc-900 mb-6 md:mb-8">
+      Gestión del Menú 🍕
       </h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-6 gap-6">
