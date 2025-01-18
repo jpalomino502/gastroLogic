@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircleIcon, ClockIcon } from '../components/Icons';
+import { CheckCircle, Clock } from 'lucide-react';
 
 export default function Cocina({ comandas, actualizarEstadoComanda }) {
   const [tabActiva, setTabActiva] = useState('en_preparacion');
@@ -39,7 +39,7 @@ export default function Cocina({ comandas, actualizarEstadoComanda }) {
       </p>
       <ul className="list-disc list-inside text-sm mb-4 flex-grow">
         {comanda.items.map((item, index) => (
-          <li key={index}>{item.nombre} x {item.cantidad}</li>
+          <li key={index}>{item.nombre} - Cantidad: {item.cantidad}</li>
         ))}
       </ul>
       {comanda.estado !== 'finalizado' && (
@@ -53,11 +53,11 @@ export default function Cocina({ comandas, actualizarEstadoComanda }) {
         >
           {comanda.estado === 'pendiente' ? (
             <>
-              <ClockIcon className="mr-2 h-4 w-4" /> Iniciar
+              <Clock className="mr-2 h-4 w-4" /> Iniciar
             </>
           ) : (
             <>
-              <CheckCircleIcon className="mr-2 h-4 w-4" /> Finalizar
+              <CheckCircle className="mr-2 h-4 w-4" /> Finalizar
             </>
           )}
         </motion.button>
@@ -67,20 +67,20 @@ export default function Cocina({ comandas, actualizarEstadoComanda }) {
 
   return (
     <div className="p-4 max-w-7xl mx-auto">
+      <h1 className="text-3xl md:text-4xl font-bold text-zinc-900 mb-6 md:mb-8">Cocina</h1>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="bg-white shadow-lg rounded-lg p-4"
+        className="bg-[#f0f7ff] shadow-lg rounded-lg p-4"
       >
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4">Cocina</h2>
         <div className="mb-4">
           <nav className="flex space-x-2" aria-label="Tabs">
             <button
               onClick={() => setTabActiva('en_preparacion')}
               className={`${
                 tabActiva === 'en_preparacion'
-                  ? 'bg-gray-200 text-black'
+                  ? 'bg-[#e4f4ff] text-black'
                   : 'text-gray-500 hover:text-gray-700'
               } flex-1 px-3 py-2 font-medium text-sm rounded-md`}
             >
@@ -90,7 +90,7 @@ export default function Cocina({ comandas, actualizarEstadoComanda }) {
               onClick={() => setTabActiva('finalizados')}
               className={`${
                 tabActiva === 'finalizados'
-                  ? 'bg-gray-200 text-black'
+                  ? 'bg-[#e4f4ff] text-black'
                   : 'text-gray-500 hover:text-gray-700'
               } flex-1 px-3 py-2 font-medium text-sm rounded-md`}
             >

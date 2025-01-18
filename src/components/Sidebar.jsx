@@ -34,15 +34,15 @@ function Sidebar({ isOpen, setVista, vista, toggleSidebar, setIsSidebarOpen }) {
           : "text-zinc-400 hover:text-white"
       } ${isOpen || isHovered ? "justify-start" : "justify-center"}`}
     >
-      <Icon className="h-5 w-5 min-w-[20px]" />
-      <div
-        className={`overflow-hidden transition-all duration-300 ease-in-out`}
-        style={{
-          width: isOpen || isHovered ? "auto" : "0px",
-          whiteSpace: "nowrap",
-        }}
-      >
-        <span className="ml-3 text-sm font-medium truncate">{label}</span>
+      <div className="flex items-center">
+        <Icon className="h-5 w-5 min-w-[20px]" />
+        <span 
+          className={`ml-3 text-sm font-medium truncate transition-all duration-300 ${
+            isOpen || isHovered ? "opacity-100 w-auto" : "opacity-0 w-0"
+          }`}
+        >
+          {label}
+        </span>
       </div>
       {vista === view && (
         <div className="absolute left-0 top-0 bottom-0 w-1 bg-white rounded-r"></div>
@@ -50,7 +50,6 @@ function Sidebar({ isOpen, setVista, vista, toggleSidebar, setIsSidebarOpen }) {
     </motion.button>
   );
   
-
   const sidebarContent = (
     <div 
       className={`h-full flex flex-col bg-zinc-900 rounded-r-2xl transition-all duration-300 ${isOpen || isHovered ? 'w-64' : 'w-20'}`}
@@ -68,35 +67,37 @@ function Sidebar({ isOpen, setVista, vista, toggleSidebar, setIsSidebarOpen }) {
       }}
     >
       <div className="flex items-center h-20 px-4 border-b border-zinc-800">
-  <div className="flex items-center justify-center w-full">
-    <UtensilsIcon className="h-8 w-8 text-white" />
-    {(isOpen || isHovered) && (
-      <span className="ml-3 text-xl font-bold text-white">GastroLogic</span>
-    )}
-  </div>
-  {(isOpen || isHovered) && isMobile && (
-    <button
-      onClick={toggleSidebar}
-      className="text-zinc-400 hover:text-white focus:outline-none"
-    >
-      <svg
-        className="h-6 w-6"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M6 18L18 6M6 6l12 12"
-        />
-      </svg>
-    </button>
-  )}
-</div>
+        <div className="flex items-center justify-center w-full">
+          <UtensilsIcon className="h-8 w-8 text-white" />
+          <span className={`ml-3 text-xl font-bold text-white transition-all duration-300 ${
+            isOpen || isHovered ? "opacity-100 w-auto" : "opacity-0 w-0 overflow-hidden"
+          }`}>
+            GastroLogic
+          </span>
+        </div>
+        {(isOpen || isHovered) && isMobile && (
+          <button
+            onClick={toggleSidebar}
+            className="text-zinc-400 hover:text-white focus:outline-none"
+          >
+            <svg
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        )}
+      </div>
 
-      <nav className="flex-grow px-3 py-6">
+      <nav className="flex-grow py-6">
         <div className="space-y-4">
           <NavItem icon={HomeIcon} label="Resumen" view="resumen" />
           <NavItem icon={ClipboardListIcon} label="Menú" view="menu" />

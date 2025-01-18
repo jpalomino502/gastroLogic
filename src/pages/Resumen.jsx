@@ -228,8 +228,8 @@ return (
                   onClick={() => setOrderTimeRange(button.id)}
                   className={`px-3 py-1.5 text-sm rounded-lg flex items-center gap-2 ${
                     orderTimeRange === button.id 
-                      ? 'bg-gray-100 text-zinc-900' 
-                      : 'text-zinc-900 hover:bg-gray-50'
+                    ? 'font-bold text-zinc-900' 
+                    : 'text-zinc-900 hover:font-bold'
                   }`}
                 >
                   <button.icon className="w-4 h-4" />
