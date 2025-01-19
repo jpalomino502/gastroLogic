@@ -1,14 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import {
-  PlusCircle,
-  Pencil,
-  Trash2,
-  Search,
-  Filter,
-  ArrowUpDown,
-  Tag,
-} from "lucide-react";
+import { PlusCircle, Pencil, Trash2, Search, Filter, ArrowUpDown, Tag } from 'lucide-react';
 import { toast } from "react-hot-toast";
 import { formatPrice } from "../utils/formatPrice";
 
@@ -73,6 +65,19 @@ function Menu({ menu, agregarPlato, editarPlato, eliminarPlato }) {
   const [filterCategory, setFilterCategory] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
   const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    // Load categories from localStorage on component mount
+    const savedCategories = localStorage.getItem('categories');
+    if (savedCategories) {
+      setCategories(JSON.parse(savedCategories));
+    }
+  }, []);
+
+  useEffect(() => {
+    // Save categories to localStorage whenever they change
+    localStorage.setItem('categories', JSON.stringify(categories));
+  }, [categories]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -395,3 +400,4 @@ function Menu({ menu, agregarPlato, editarPlato, eliminarPlato }) {
 }
 
 export default Menu;
+
