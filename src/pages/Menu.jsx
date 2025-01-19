@@ -67,7 +67,6 @@ function Menu({ menu, agregarPlato, editarPlato, eliminarPlato }) {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    // Load categories from localStorage on component mount
     const savedCategories = localStorage.getItem('categories');
     if (savedCategories) {
       setCategories(JSON.parse(savedCategories));
@@ -75,7 +74,6 @@ function Menu({ menu, agregarPlato, editarPlato, eliminarPlato }) {
   }, []);
 
   useEffect(() => {
-    // Save categories to localStorage whenever they change
     localStorage.setItem('categories', JSON.stringify(categories));
   }, [categories]);
 
@@ -376,7 +374,6 @@ function Menu({ menu, agregarPlato, editarPlato, eliminarPlato }) {
           </motion.div>
         </div>
 
-        {/* Herramientas del Menú */}
         <div className="col-span-1 lg:col-span-2">
           <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-zinc-900 mb-4">
             Herramientas del Menú
