@@ -109,7 +109,11 @@ function App() {
         toggleSidebar={toggleSidebar}
         setIsSidebarOpen={setIsSidebarOpen}
       />
-      <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ${isSidebarOpen ? 'lg:ml-64' : 'lg:ml-20'}`}>
+      <div
+        className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ${
+          isSidebarOpen ? "lg:ml-64" : "lg:ml-20"
+        }`}
+      >
         <Header toggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
         <main className="no-scrollbar overflow-auto flex-1 overflow-x-hidden overflow-y-auto bg-white p-4 lg:rounded-2xl lg:my-3 lg:mr-2">
           <AnimatePresence mode="wait">
@@ -156,4 +160,3 @@ function App() {
 }
 
 export default App;
-
