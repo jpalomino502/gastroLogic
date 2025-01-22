@@ -115,7 +115,7 @@ function App() {
         }`}
       >
         <Header toggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
-        <main className="no-scrollbar overflow-auto flex-1 overflow-x-hidden overflow-y-auto bg-white p-4 lg:rounded-2xl lg:my-3 lg:mr-2">
+        <main className="no-scrollbar overflow-auto flex-1 overflow-x-hidden overflow-y-auto bg-white lg:rounded-2xl lg:my-3 lg:mr-2">
           <AnimatePresence mode="wait">
             <motion.div
               key={vista}
