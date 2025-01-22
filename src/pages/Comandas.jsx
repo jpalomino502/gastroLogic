@@ -1,103 +1,210 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { PlusCircle, MinusCircle, Trash2, ShoppingBag, MapPin, Search, Filter } from 'lucide-react';
-import { toast } from 'react-hot-toast';
-import { formatPrice } from '../utils/formatPrice';
+import React, { useState } from "react"
+import { motion } from "framer-motion"
+import { PlusCircle, MinusCircle, Trash2, ShoppingBag, MapPin, Search, Filter, X } from "lucide-react"
+import { toast } from "react-hot-toast"
+import { formatPrice } from "../utils/formatPrice"
 
 function Comandas({ menu, agregarComanda, comandas = [] }) {
-  const [comanda, setComanda] = useState({ mesa: '', items: [], total: 0, esDomicilio: false, direccion: '' });
-  const [tabActiva, setTabActiva] = useState('nueva');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterCategory, setFilterCategory] = useState('');
+  const [comanda, setComanda] = useState({
+    mesa: "",
+    items: [],
+    total: 0,
+    esDomicilio: false,
+    direccion: "",
+  })
+  const [tabActiva, setTabActiva] = useState("nueva")
+  const [searchTerm, setSearchTerm] = useState("")
+  const [filterCategory, setFilterCategory] = useState("")
+  const [observacionTemp, setObservacionTemp] = useState("")
+  const [platoSeleccionado, setPlatoSeleccionado] = useState(null)
 
   const agregarItem = (plato) => {
-    const itemExistente = comanda.items.find(item => item.nombre === plato.nombre);
+    const itemExistente = comanda.items.find((item) => item.nombre === plato.nombre)
     if (itemExistente) {
-      setComanda(prevComanda => ({
+      setComanda((prevComanda) => ({
         ...prevComanda,
-        items: prevComanda.items.map(item =>
-          item.nombre === plato.nombre
-            ? { ...item, cantidad: item.cantidad + 1 }
-            : item
+        items: prevComanda.items.map((item) =>
+          item.nombre === plato.nombre ? { ...item, cantidad: item.cantidad + 1 } : item,
         ),
-        total: prevComanda.total + plato.precio
-      }));
+        total: prevComanda.total + plato.precio,
+      }))
     } else {
-      setComanda(prevComanda => ({
+      setComanda((prevComanda) => ({
         ...prevComanda,
-        items: [...prevComanda.items, { ...plato, cantidad: 1 }],
-        total: prevComanda.total + plato.precio
-      }));
+        items: [...prevComanda.items, { ...plato, cantidad: 1, observacion: "" }],
+        total: prevComanda.total + plato.precio,
+      }))
     }
-  };
+  }
+
+  const confirmarAgregarItem = () => {
+    if (!platoSeleccionado) return
+
+    const itemExistente = comanda.items.find((item) => item.nombre === platoSeleccionado.nombre)
+    if (itemExistente) {
+      setComanda((prevComanda) => ({
+        ...prevComanda,
+        items: prevComanda.items.map((item) =>
+          item.nombre === platoSeleccionado.nombre
+            ? { ...item, cantidad: item.cantidad + 1, observacion: observacionTemp || item.observacion }
+            : item,
+        ),
+        total: prevComanda.total + platoSeleccionado.precio,
+      }))
+    } else {
+      setComanda((prevComanda) => ({
+        ...prevComanda,
+        items: [...prevComanda.items, { ...platoSeleccionado, cantidad: 1, observacion: observacionTemp }],
+        total: prevComanda.total + platoSeleccionado.precio,
+      }))
+    }
+    setPlatoSeleccionado(null)
+    setObservacionTemp("")
+  }
 
   const eliminarItem = (index) => {
-    const itemEliminado = comanda.items[index];
-    setComanda(prevComanda => ({
+    const itemEliminado = comanda.items[index]
+    setComanda((prevComanda) => ({
       ...prevComanda,
       items: prevComanda.items.filter((_, i) => i !== index),
-      total: prevComanda.total - (itemEliminado.precio * itemEliminado.cantidad)
-    }));
-  };
+      total: prevComanda.total - itemEliminado.precio * itemEliminado.cantidad,
+    }))
+  }
 
   const actualizarCantidad = (index, incremento) => {
-    const item = comanda.items[index];
+    const item = comanda.items[index]
     if (item.cantidad + incremento > 0) {
-      setComanda(prevComanda => ({
+      setComanda((prevComanda) => ({
         ...prevComanda,
         items: prevComanda.items.map((item, i) =>
-          i === index ? { ...item, cantidad: item.cantidad + incremento } : item
+          i === index ? { ...item, cantidad: item.cantidad + incremento } : item,
         ),
-        total: prevComanda.total + (item.precio * incremento)
-      }));
+        total: prevComanda.total + item.precio * incremento,
+      }))
     }
-  };
+  }
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault()
     if ((comanda.mesa || (comanda.esDomicilio && comanda.direccion)) && comanda.items.length > 0) {
-      agregarComanda(comanda);
-      setComanda({ mesa: '', items: [], total: 0, esDomicilio: false, direccion: '' });
-      toast.success('Comanda creada correctamente');
+      const nuevaComanda = {
+        ...comanda,
+        numeroComanda: Date.now(),
+        estado: "pendiente",
+      }
+      agregarComanda(nuevaComanda)
+      imprimirRecibo(nuevaComanda)
+      setComanda({ mesa: "", items: [], total: 0, esDomicilio: false, direccion: "" })
+      toast.success("Comanda creada correctamente")
     }
-  };
+  }
+
+  const imprimirRecibo = (comanda) => {
+    const recibo = `
+      RECIBO DE COMANDA
+      -----------------
+      ${comanda.esDomicilio ? `Domicilio: ${comanda.direccion}` : `Mesa: ${comanda.mesa}`}
+      
+      Detalles de la orden:
+      ${comanda.items
+        .map(
+          (item) => `
+      - ${item.nombre} x${item.cantidad} - ${formatPrice(item.precio * item.cantidad)}
+        ${item.observacion ? `  Obs: ${item.observacion}` : ""}`,
+        )
+        .join("\n")}
+      
+      Total: ${formatPrice(comanda.total)}
+    `
+
+    const ventanaImpresion = window.open("", "_blank")
+    ventanaImpresion.document.write(`
+      <html>
+        <head>
+          <title>Recibo de Comanda</title>
+          <style>
+            @page {
+              size: 80mm 297mm;
+              margin: 0;
+            }
+            body {
+              font-family: 'Courier New', monospace;
+              font-size: 12px;
+              line-height: 1.4;
+              width: 72mm;
+              padding: 5mm 4mm;
+              margin: 0;
+            }
+            h1 {
+              font-size: 14px;
+              text-align: center;
+              margin-bottom: 10px;
+            }
+            .divider {
+              border-top: 1px dashed #000;
+              margin: 10px 0;
+            }
+            .total {
+              font-weight: bold;
+              margin-top: 10px;
+            }
+          </style>
+        </head>
+        <body>
+          <h1>RECIBO DE COMANDA</h1>
+          <div class="divider"></div>
+          <p>${comanda.esDomicilio ? `Domicilio: ${comanda.direccion}` : `Mesa: ${comanda.mesa}`}</p>
+          <div class="divider"></div>
+          <h2>Detalles de la orden:</h2>
+          ${comanda.items
+            .map(
+              (item) => `
+            <p>
+              ${item.nombre} x${item.cantidad} - ${formatPrice(item.precio * item.cantidad)}<br>
+              ${item.observacion ? `<small>Obs: ${item.observacion}</small>` : ""}
+            </p>
+          `,
+            )
+            .join("")}
+          <div class="divider"></div>
+          <p class="total">Total: ${formatPrice(comanda.total)}</p>
+        </body>
+      </html>
+    `)
+    ventanaImpresion.document.close()
+    ventanaImpresion.print()
+    ventanaImpresion.close()
+  }
 
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
-  };
-
-  console.log('Filtered menu:', menu.filter(plato => !filterCategory || plato.categoria === filterCategory));
+    visible: { opacity: 1, y: 0 },
+  }
 
   return (
     <div className="space-y-6 p-4 md:p-8">
-      <h1 className="text-3xl md:text-4xl font-bold text-zinc-900 mb-6 md:mb-8">
-        Gestión de Comandas 📑</h1>
+      <h1 className="text-3xl md:text-4xl font-bold text-zinc-900 mb-6 md:mb-8">Gestión de Comandas 📑</h1>
 
       <div className="flex space-x-4 mb-6">
         <button
-          onClick={() => setTabActiva('nueva')}
+          onClick={() => setTabActiva("nueva")}
           className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-            tabActiva === 'nueva'
-              ? 'bg-[#e4f4ff] text-zinc-900'
-              : 'bg-white text-zinc-600 hover:bg-gray-100'
+            tabActiva === "nueva" ? "bg-[#e4f4ff] text-zinc-900" : "bg-white text-zinc-600 hover:bg-gray-100"
           }`}
         >
           Nueva Comanda
         </button>
         <button
-          onClick={() => setTabActiva('lista')}
+          onClick={() => setTabActiva("lista")}
           className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-            tabActiva === 'lista'
-              ? 'bg-[#e4f4ff] text-zinc-900'
-              : 'bg-white text-zinc-600 hover:bg-gray-100'
+            tabActiva === "lista" ? "bg-[#e4f4ff] text-zinc-900" : "bg-white text-zinc-600 hover:bg-gray-100"
           }`}
         >
           Lista de Comandas
         </button>
       </div>
 
-      {tabActiva === 'nueva' ? (
+      {tabActiva === "nueva" ? (
         <>
           <div className="grid grid-cols-1 lg:grid-cols-6 gap-6">
             <div className="lg:col-span-4">
@@ -117,7 +224,9 @@ function Comandas({ menu, agregarComanda, comandas = [] }) {
                         className="form-radio text-blue-600"
                         name="tipoComanda"
                         checked={!comanda.esDomicilio}
-                        onChange={() => setComanda(prev => ({ ...prev, esDomicilio: false, mesa: '', direccion: '' }))}
+                        onChange={() =>
+                          setComanda((prev) => ({ ...prev, esDomicilio: false, mesa: "", direccion: "" }))
+                        }
                       />
                       <span className="ml-2 text-zinc-700">Mesa</span>
                     </label>
@@ -127,14 +236,16 @@ function Comandas({ menu, agregarComanda, comandas = [] }) {
                         className="form-radio text-blue-600"
                         name="tipoComanda"
                         checked={comanda.esDomicilio}
-                        onChange={() => setComanda(prev => ({ ...prev, esDomicilio: true, mesa: '', direccion: '' }))}
+                        onChange={() => setComanda((prev) => ({ ...prev, esDomicilio: true, mesa: "", direccion: "" }))}
                       />
                       <span className="ml-2 text-zinc-700">Domicilio</span>
                     </label>
                   </div>
                   {comanda.esDomicilio ? (
                     <div className="mb-4">
-                      <label htmlFor="direccion" className="block text-sm font-semibold text-zinc-700">Dirección de Entrega</label>
+                      <label htmlFor="direccion" className="block text-sm font-semibold text-zinc-700">
+                        Dirección de Entrega
+                      </label>
                       <div className="mt-2 relative rounded-md shadow-sm">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                           <MapPin className="h-5 w-5 text-gray-400" />
@@ -151,7 +262,9 @@ function Comandas({ menu, agregarComanda, comandas = [] }) {
                     </div>
                   ) : (
                     <div className="mb-4">
-                      <label htmlFor="mesa" className="block text-sm font-semibold text-zinc-700">Número de Mesa</label>
+                      <label htmlFor="mesa" className="block text-sm font-semibold text-zinc-700">
+                        Número de Mesa
+                      </label>
                       <div className="mt-2 relative rounded-md shadow-sm">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                           <ShoppingBag className="h-5 w-5 text-gray-400" />
@@ -169,7 +282,9 @@ function Comandas({ menu, agregarComanda, comandas = [] }) {
                   )}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                     <div>
-                      <label htmlFor="search" className="block text-sm font-semibold text-zinc-700">Buscar Plato</label>
+                      <label htmlFor="search" className="block text-sm font-semibold text-zinc-700">
+                        Buscar Plato
+                      </label>
                       <div className="mt-2 relative rounded-md shadow-sm">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                           <Search className="h-5 w-5 text-gray-400" />
@@ -185,7 +300,9 @@ function Comandas({ menu, agregarComanda, comandas = [] }) {
                       </div>
                     </div>
                     <div>
-                      <label htmlFor="category" className="block text-sm font-semibold text-zinc-700">Categoría</label>
+                      <label htmlFor="category" className="block text-sm font-semibold text-zinc-700">
+                        Categoría
+                      </label>
                       <div className="mt-2 relative rounded-md shadow-sm">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                           <Filter className="h-5 w-5 text-gray-400" />
@@ -197,8 +314,10 @@ function Comandas({ menu, agregarComanda, comandas = [] }) {
                           onChange={(e) => setFilterCategory(e.target.value)}
                         >
                           <option value="">Todas las categorías</option>
-                          {Array.from(new Set(menu.map(plato => plato.categoria))).map((categoria) => (
-                            <option key={categoria} value={categoria}>{categoria}</option>
+                          {Array.from(new Set(menu.map((plato) => plato.categoria))).map((categoria) => (
+                            <option key={categoria} value={categoria}>
+                              {categoria}
+                            </option>
                           ))}
                         </select>
                       </div>
@@ -208,8 +327,8 @@ function Comandas({ menu, agregarComanda, comandas = [] }) {
                     <h3 className="text-lg font-medium text-zinc-900 mb-2">Menú</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
                       {menu
-                        .filter(plato => plato.nombre.toLowerCase().includes(searchTerm.toLowerCase()))
-                        .filter(plato => !filterCategory || plato.categoria === filterCategory)
+                        .filter((plato) => plato.nombre.toLowerCase().includes(searchTerm.toLowerCase()))
+                        .filter((plato) => !filterCategory || plato.categoria === filterCategory)
                         .map((plato, index) => (
                           <motion.button
                             key={index}
@@ -238,38 +357,71 @@ function Comandas({ menu, agregarComanda, comandas = [] }) {
                 transition={{ duration: 0.3, delay: 0.2 }}
                 className="bg-[#fff0f5] rounded-3xl border border-gray-100 shadow-sm p-6 sm:p-8"
               >
+                {platoSeleccionado && (
+                  <div className="mb-4 p-4 bg-white rounded-lg shadow">
+                    <h4 className="text-lg font-semibold mb-2">{platoSeleccionado.nombre}</h4>
+                    <textarea
+                      className="w-full p-2 border rounded"
+                      placeholder="Observaciones (opcional)"
+                      value={observacionTemp}
+                      onChange={(e) => setObservacionTemp(e.target.value)}
+                    />
+                    <div className="mt-2 flex justify-end">
+                      <button onClick={() => setPlatoSeleccionado(null)} className="mr-2 px-3 py-1 bg-gray-200 rounded">
+                        Cancelar
+                      </button>
+                      <button onClick={confirmarAgregarItem} className="px-3 py-1 bg-blue-500 text-white rounded">
+                        Agregar
+                      </button>
+                    </div>
+                  </div>
+                )}
                 <ul className="space-y-2 max-h-[calc(100vh-300px)] overflow-y-auto">
                   {comanda.items.map((item, index) => (
-                    <li key={index} className="flex justify-between items-center py-2 border-b border-gray-100">
-                      <span className="text-zinc-700 text-sm">{item.nombre}</span>
-                      <div className="flex items-center">
-                        <motion.button
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
-                          onClick={() => actualizarCantidad(index, -1)}
-                          className="text-blue-600 hover:text-blue-800 mr-1"
-                        >
-                          <MinusCircle className="h-4 w-4" />
-                        </motion.button>
-                        <span className="mx-1 font-medium text-sm">{item.cantidad}</span>
-                        <motion.button
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
-                          onClick={() => actualizarCantidad(index, 1)}
-                          className="text-blue-600 hover:text-blue-800 mr-1"
-                        >
-                          <PlusCircle className="h-4 w-4" />
-                        </motion.button>
-                        <span className="mr-1 text-zinc-900 font-medium text-sm">{formatPrice(item.precio * item.cantidad)}</span>
-                        <motion.button
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
-                          onClick={() => eliminarItem(index)}
-                          className="text-red-600 hover:text-red-800"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </motion.button>
+                    <li key={index} className="flex flex-col py-2 border-b border-gray-100">
+                      <div className="flex justify-between items-center">
+                        <span className="text-zinc-700 text-sm">{item.nombre}</span>
+                        <div className="flex items-center">
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() => actualizarCantidad(index, -1)}
+                            className="text-blue-600 hover:text-blue-800 mr-1"
+                          >
+                            <MinusCircle className="h-4 w-4" />
+                          </motion.button>
+                          <span className="mx-1 font-medium text-sm">{item.cantidad}</span>
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() => actualizarCantidad(index, 1)}
+                            className="text-blue-600 hover:text-blue-800 mr-1"
+                          >
+                            <PlusCircle className="h-4 w-4" />
+                          </motion.button>
+                          <span className="mr-1 text-zinc-900 font-medium text-sm">
+                            {formatPrice(item.precio * item.cantidad)}
+                          </span>
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() => eliminarItem(index)}
+                            className="text-red-600 hover:text-red-800"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </motion.button>
+                        </div>
                       </div>
+                      <textarea
+                        className="mt-1 w-full p-2 text-xs border rounded"
+                        placeholder="Observaciones (opcional)"
+                        value={item.observacion}
+                        onChange={(e) => {
+                          const newItems = [...comanda.items]
+                          newItems[index].observacion = e.target.value
+                          setComanda({ ...comanda, items: newItems })
+                        }}
+                      />
                     </li>
                   ))}
                 </ul>
@@ -302,11 +454,21 @@ function Comandas({ menu, agregarComanda, comandas = [] }) {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nº Comanda</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mesa/Domicilio</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Detalles</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Nº Comanda
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Mesa/Domicilio
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Estado
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Total
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Detalles
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -318,19 +480,32 @@ function Comandas({ menu, agregarComanda, comandas = [] }) {
                         {comanda.esDomicilio ? `Domicilio: ${comanda.direccion}` : `Mesa: ${comanda.mesa}`}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          comanda.estado === 'pendiente' ? 'bg-yellow-100 text-yellow-800' :
-                            comanda.estado === 'en_preparacion' ? 'bg-blue-100 text-blue-800' :
-                              'bg-green-100 text-green-800'
-                        }`}>
+                        <span
+                          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                            comanda.estado === "pendiente"
+                              ? "bg-yellow-100 text-yellow-800"
+                              : comanda.estado === "en_preparacion"
+                                ? "bg-blue-100 text-blue-800"
+                                : "bg-green-100 text-green-800"
+                          }`}
+                        >
                           {comanda.estado}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-900 font-medium">{formatPrice(comanda.total)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-900 font-medium">
+                        {formatPrice(comanda.total)}
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-700">
                         <ul className="list-disc list-inside">
                           {comanda.items.map((item, index) => (
-                            <li key={index}>{item.nombre} - Cantidad x{item.cantidad}</li>
+                            <li key={index}>
+                              {item.nombre} - Cantidad x{item.cantidad}
+                              {item.observacion && (
+                                <span className="block ml-4 text-xs text-gray-500 italic">
+                                  Observación: {item.observacion}
+                                </span>
+                              )}
+                            </li>
                           ))}
                         </ul>
                       </td>
@@ -349,8 +524,8 @@ function Comandas({ menu, agregarComanda, comandas = [] }) {
         </>
       )}
     </div>
-  );
+  )
 }
 
-export default Comandas;
+export default Comandas
 
