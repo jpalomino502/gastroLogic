@@ -95,7 +95,7 @@ function Comandas({ menu, agregarComanda, comandas = [] }) {
       agregarComanda(nuevaComanda)
       imprimirRecibo(nuevaComanda)
       setComanda({ mesa: "", items: [], total: 0, esDomicilio: false, direccion: "" })
-      toast.success("Comanda creada correctamente")
+      toast.success("Comanda creada e impresa correctamente")
     }
   }
 
