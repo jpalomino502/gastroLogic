@@ -330,7 +330,7 @@ function Comandas({ menu, agregarComanda, comandas = [] }) {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-700">
                         <ul className="list-disc list-inside">
                           {comanda.items.map((item, index) => (
-                            <li key={index}>{item.nombre} x {item.cantidad}</li>
+                            <li key={index}>{item.nombre} - Cantidad x{item.cantidad}</li>
                           ))}
                         </ul>
                       </td>

@@ -293,7 +293,6 @@ const ModernDashboard = ({ comandas, ganancias }) => {
                     </td>
                   </tr>
                 ))}
-                {/* Filas vacías para mantener el espacio constante */}
                 {[...Array(Math.max(0, 5 - comandas.length))].map((_, index) => (
                   <tr key={`empty-${index}`}>
                     <td colSpan={4} className="h-[53px]"></td>
@@ -305,7 +304,7 @@ const ModernDashboard = ({ comandas, ganancias }) => {
           <div className="mt-4 flex justify-center">
             <button
               onClick={() => setIsModalOpen(true)}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              className="px-4 py-2 bg-[#ded2e2] text-black rounded-md hover:bg-[#b6aaba] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               Ver más
             </button>
@@ -327,7 +326,6 @@ const ModernDashboard = ({ comandas, ganancias }) => {
       ref={modalRef}
       className="bg-white rounded-lg w-full max-w-5xl flex flex-col h-[calc(100vh-2rem)] max-h-[90vh]"
     >
-      {/* Encabezado del modal */}
       <div className="flex justify-between items-center p-6 border-b">
         <h2 className="text-2xl font-semibold">Todos los pedidos</h2>
         <button
@@ -338,9 +336,7 @@ const ModernDashboard = ({ comandas, ganancias }) => {
         </button>
       </div>
 
-      {/* Cuerpo del modal */}
       <div className="flex-1 overflow-y-auto p-8">
-        {/* Botones de filtrado */}
         <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-6">
           {[
             { id: "day", label: "Hoy", icon: Calendar },
@@ -362,7 +358,6 @@ const ModernDashboard = ({ comandas, ganancias }) => {
           ))}
         </div>
 
-        {/* Tabla de pedidos */}
         <table className="min-w-full">
           <thead>
             <tr className="border-b border-gray-100">
