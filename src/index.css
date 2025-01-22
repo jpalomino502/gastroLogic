@@ -3,16 +3,14 @@
 body {
     font-family: "Inter", serif;
     font-optical-sizing: auto;
-    /* font-weight: <weight>; */
     font-style: normal;
 }
 
-/* Ocultar barra de scroll */
 .no-scrollbar::-webkit-scrollbar {
-    display: none; /* Ocultar barra de scroll en navegadores basados en Webkit */
+    display: none;
   }
   .no-scrollbar {
-    -ms-overflow-style: none;  /* Ocultar barra de scroll en IE y Edge */
-    scrollbar-width: none;     /* Ocultar barra de scroll en Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
   
