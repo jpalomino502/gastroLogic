@@ -4,7 +4,7 @@ import { PlusCircle, MinusCircle, Trash2, ShoppingBag, MapPin, Search, Filter, X
 import { toast } from "react-hot-toast"
 import { formatPrice } from "../utils/formatPrice"
 
-function Comandas({ menu, agregarComanda, comandas = [] }) {
+function Comandas({ menu, agregarComanda, comandas, actualizarEstadoComanda }) {
   const [comanda, setComanda] = useState({
     mesa: "",
     items: [],
@@ -17,6 +17,11 @@ function Comandas({ menu, agregarComanda, comandas = [] }) {
   const [filterCategory, setFilterCategory] = useState("")
   const [observacionTemp, setObservacionTemp] = useState("")
   const [platoSeleccionado, setPlatoSeleccionado] = useState(null)
+  const [comandaSeleccionada, setComandaSeleccionada] = useState(null)
+  const [metodoPago, setMetodoPago] = useState("")
+  const [montoPagado, setMontoPagado] = useState("")
+  const [divisionCuenta, setDivisionCuenta] = useState([])
+  const [numeroPersonas, setNumeroPersonas] = useState(1)
 
   const agregarItem = (plato) => {
     const itemExistente = comanda.items.find((item) => item.nombre === plato.nombre)
@@ -176,6 +181,79 @@ function Comandas({ menu, agregarComanda, comandas = [] }) {
     ventanaImpresion.close()
   }
 
+  const handlePago = (comanda) => {
+    setComandaSeleccionada(comanda)
+    setMetodoPago("")
+    setMontoPagado("")
+    setDivisionCuenta(
+      Array(numeroPersonas)
+        .fill()
+        .map(() => ({ items: [], total: 0 })),
+    )
+  }
+
+  const confirmarPago = () => {
+    if (!comandaSeleccionada) {
+      toast.error("No se ha seleccionado ninguna comanda para pagar")
+      return
+    }
+
+    if (numeroPersonas === 1) {
+      if (!metodoPago) {
+        toast.error("Por favor, seleccione un método de pago")
+        return
+      }
+      actualizarEstadoComanda(comandaSeleccionada.id, "pagado", {
+        metodoPago,
+        montoPagado: comandaSeleccionada.total,
+      })
+    } else {
+      const totalPagado = divisionCuenta.reduce((sum, division) => sum + division.total, 0)
+      if (Math.abs(totalPagado - comandaSeleccionada.total) > 0.01) {
+        toast.error("El monto total pagado no coincide con el total de la comanda")
+        return
+      }
+      actualizarEstadoComanda(comandaSeleccionada.id, "pagado", {
+        metodoPago: "dividido",
+        montoPagado: totalPagado,
+        divisionCuenta,
+      })
+    }
+
+    toast.success("Pago procesado correctamente")
+    setComandaSeleccionada(null)
+    setMetodoPago("")
+    setNumeroPersonas(1)
+    setDivisionCuenta([])
+  }
+
+  const actualizarDivisionCuenta = (personaIndex, item) => {
+    setDivisionCuenta((prevDivision) => {
+      const newDivision = [...prevDivision]
+      const personaDivision = newDivision[personaIndex]
+
+      const itemIndex = personaDivision.items.findIndex((i) => i.nombre === item.nombre)
+      if (itemIndex > -1) {
+        // Si el item ya existe, actualizamos su cantidad
+        const existingItem = personaDivision.items[itemIndex]
+        if (existingItem.cantidad > 1) {
+          existingItem.cantidad -= 1
+          personaDivision.total -= item.precio
+        } else {
+          // Si la cantidad es 1, lo eliminamos
+          personaDivision.items.splice(itemIndex, 1)
+          personaDivision.total -= item.precio
+        }
+      } else {
+        // Si el item no existe, lo agregamos
+        personaDivision.items.push({ ...item, cantidad: 1 })
+        personaDivision.total += item.precio
+      }
+
+      return newDivision
+    })
+  }
+
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 },
@@ -193,6 +271,14 @@ function Comandas({ menu, agregarComanda, comandas = [] }) {
           }`}
         >
           Nueva Comanda
+        </button>
+        <button
+          onClick={() => setTabActiva("pagos")}
+          className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+            tabActiva === "pagos" ? "bg-[#e4f4ff] text-zinc-900" : "bg-white text-zinc-600 hover:bg-gray-100"
+          }`}
+        >
+          Pagos
         </button>
         <button
           onClick={() => setTabActiva("lista")}
@@ -443,83 +529,268 @@ function Comandas({ menu, agregarComanda, comandas = [] }) {
         </>
       ) : (
         <>
-          <h2 className="text-2xl font-semibold text-zinc-900 mb-4">Lista de Comandas</h2>
-          <motion.div
-            variants={cardVariants}
-            initial="hidden"
-            animate="visible"
-            transition={{ duration: 0.3 }}
-            className="bg-[#f0fff0] rounded-xl border border-gray-100 shadow-sm p-6 overflow-x-auto"
-          >
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Nº Comanda
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Mesa/Domicilio
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Estado
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Total
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Detalles
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {comandas && comandas.length > 0 ? (
-                  comandas.map((comanda) => (
-                    <tr key={comanda.id}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-900">#{comanda.numeroComanda}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-700">
-                        {comanda.esDomicilio ? `Domicilio: ${comanda.direccion}` : `Mesa: ${comanda.mesa}`}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span
-                          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            comanda.estado === "pendiente"
-                              ? "bg-yellow-100 text-yellow-800"
-                              : "bg-green-100 text-green-800"
-                          }`}
-                        >
-                          {comanda.estado}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-900 font-medium">
-                        {formatPrice(comanda.total)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-700">
-                        <ul className="list-disc list-inside">
-                          {comanda.items.map((item, index) => (
-                            <li key={index}>
-                              {item.nombre} - Cantidad x{item.cantidad}
-                              {item.observacion && (
-                                <span className="block ml-4 text-xs text-gray-500 italic">
-                                  Observación: {item.observacion}
-                                </span>
-                              )}
-                            </li>
-                          ))}
-                        </ul>
-                      </td>
+          {tabActiva === "lista" ? (
+            <>
+              <h2 className="text-2xl font-semibold text-zinc-900 mb-4">Lista de Comandas</h2>
+              <motion.div
+                variants={cardVariants}
+                initial="hidden"
+                animate="visible"
+                transition={{ duration: 0.3 }}
+                className="bg-[#f0fff0] rounded-xl border border-gray-100 shadow-sm p-6 overflow-x-auto"
+              >
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Nº Comanda
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Mesa/Domicilio
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Estado
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Total
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Detalles
+                      </th>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="5" className="px-6 py-4 text-center text-gray-500">
-                      No hay comandas disponibles
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </motion.div>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {comandas && comandas.length > 0 ? (
+                      comandas.map((comanda) => (
+                        <tr key={comanda.id}>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-900">
+                            #{comanda.numeroComanda}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-700">
+                            {comanda.esDomicilio ? `Domicilio: ${comanda.direccion}` : `Mesa: ${comanda.mesa}`}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span
+                              className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                comanda.estado === "pendiente"
+                                  ? "bg-yellow-100 text-yellow-800"
+                                  : comanda.estado === "finalizado"
+                                    ? "bg-green-100 text-green-800"
+                                    : "bg-blue-100 text-blue-800"
+                              }`}
+                            >
+                              {comanda.estado}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-900 font-medium">
+                            {formatPrice(comanda.total)}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-700">
+                            <ul className="list-disc list-inside">
+                              {comanda.items.map((item, index) => (
+                                <li key={index}>
+                                  {item.nombre} - Cantidad x{item.cantidad}
+                                  {item.observacion && (
+                                    <span className="block ml-4 text-xs text-gray-500 italic">
+                                      Observación: {item.observacion}
+                                    </span>
+                                  )}
+                                </li>
+                              ))}
+                            </ul>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="5" className="px-6 py-4 text-center text-gray-500">
+                          No hay comandas disponibles
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </motion.div>
+            </>
+          ) : (
+            <>
+              <h2 className="text-2xl font-semibold text-zinc-900 mb-4">Pagos</h2>
+              <motion.div
+                variants={cardVariants}
+                initial="hidden"
+                animate="visible"
+                transition={{ duration: 0.3 }}
+                className="bg-[#f0fff0] rounded-xl border border-gray-100 shadow-sm p-6 overflow-x-auto"
+              >
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Nº Comanda
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Mesa/Domicilio
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Total
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Estado
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Acciones
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {comandas
+                      .filter((comanda) => comanda.estado === "finalizado")
+                      .map((comanda) => (
+                        <tr key={comanda.id}>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-900">
+                            #{comanda.numeroComanda}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-700">
+                            {comanda.esDomicilio ? `Domicilio: ${comanda.direccion}` : `Mesa: ${comanda.mesa}`}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-900 font-medium">
+                            {formatPrice(comanda.total)}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                              Finalizado
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button
+                              onClick={() => handlePago(comanda)}
+                              className="text-indigo-600 hover:text-indigo-900"
+                            >
+                              Procesar Pago
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </motion.div>
+            </>
+          )}
         </>
+      )}
+
+      {comandaSeleccionada && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            className="bg-white rounded-lg p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto"
+          >
+            <h3 className="text-xl font-semibold mb-4">Procesar Pago</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Número de Personas</label>
+                <input
+                  type="number"
+                  value={numeroPersonas}
+                  onChange={(e) => {
+                    const num = Math.max(1, Number.parseInt(e.target.value))
+                    setNumeroPersonas(num)
+                    setDivisionCuenta(
+                      Array(num)
+                        .fill()
+                        .map(() => ({ items: [], total: 0 })),
+                    )
+                  }}
+                  className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  min="1"
+                />
+              </div>
+              {numeroPersonas === 1 ? (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Método de Pago</label>
+                    <select
+                      value={metodoPago}
+                      onChange={(e) => setMetodoPago(e.target.value)}
+                      className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    >
+                      <option value="">Seleccione un método</option>
+                      <option value="efectivo">Efectivo</option>
+                      <option value="tarjeta">Tarjeta</option>
+                      <option value="transferencia">Transferencia</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Total a Pagar</label>
+                    <input
+                      type="text"
+                      value={formatPrice(comandaSeleccionada.total)}
+                      className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                      disabled
+                    />
+                  </div>
+                </>
+              ) : (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700mb-2">División de Cuenta</label>
+                  {comandaSeleccionada.items.map((item, itemIndex) => (
+                    <div key={itemIndex} className="mb-4 p-3 bg-gray-50 rounded-md">
+                      <p className="text-sm font-medium">
+                        {item.nombre} - {formatPrice(item.precio)} x{item.cantidad}
+                      </p>
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {Array.from({ length: numeroPersonas }).map((_, personaIndex) => {
+                          const personaItem = divisionCuenta[personaIndex]?.items.find((i) => i.nombre === item.nombre)
+                          const itemCount = personaItem ? personaItem.cantidad : 0
+                          return (
+                            <button
+                              key={personaIndex}
+                              onClick={() => actualizarDivisionCuenta(personaIndex, item)}
+                              className={`px-3 py-1 text-sm rounded-full ${
+                                itemCount > 0 ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700"
+                              }`}
+                            >
+                              Persona {personaIndex + 1} {itemCount > 0 && `(${itemCount})`}
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                  <div className="mt-4">
+                    {divisionCuenta.map((persona, index) => (
+                      <div key={index} className="flex justify-between items-center mb-2">
+                        <span>Persona {index + 1}:</span>
+                        <span className="font-semibold">{formatPrice(persona.total)}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="mt-6 flex justify-end space-x-3">
+              <button
+                onClick={() => setComandaSeleccionada(null)}
+                className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-gray-700 bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={confirmarPago}
+                className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                Confirmar Pago
+              </button>
+            </div>
+          </motion.div>
+        </motion.div>
       )}
     </div>
   )

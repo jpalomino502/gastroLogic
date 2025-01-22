@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { CheckCircle, XCircle } from "lucide-react"
+import { CheckCircle, XCircle } from 'lucide-react'
 
 export default function Cocina({ comandas, actualizarEstadoComanda, platos, actualizarDisponibilidadPlato }) {
   const [tabActiva, setTabActiva] = useState("pendientes")
@@ -72,8 +72,6 @@ export default function Cocina({ comandas, actualizarEstadoComanda, platos, actu
       </motion.button>
     </motion.div>
   )
-
-  console.log("Platos en Cocina:", platos)
 
   return (
     <div className="p-4 max-w-7xl mx-auto">

@@ -187,7 +187,7 @@ const ModernDashboard = ({ comandas, ganancias }) => {
         </div>
         <div className="md:col-span-2 lg:col-span-4 flex flex-col">
           <h3 className="text-2xl md:text-3xl font-semibold text-zinc-900 mb-3">Estado de Pedidos</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 flex-grow">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 flex-grow">
             {[
               {
                 bg: "bg-[#e8dcec]",
@@ -204,14 +204,6 @@ const ModernDashboard = ({ comandas, ganancias }) => {
                 value: currentStats.pendientes,
                 percent: getPorcentaje(currentStats.pendientes),
                 trend: "down",
-              },
-              {
-                bg: "bg-[#f5efd7]",
-                icon: <Clock className="w-5 h-5 text-zinc-900" />,
-                title: "En Curso",
-                value: currentStats.enCurso,
-                percent: getPorcentaje(currentStats.enCurso),
-                trend: "up",
               },
               {
                 bg: "bg-green-50",
