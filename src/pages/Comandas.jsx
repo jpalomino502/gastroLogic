@@ -484,9 +484,7 @@ function Comandas({ menu, agregarComanda, comandas = [] }) {
                           className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                             comanda.estado === "pendiente"
                               ? "bg-yellow-100 text-yellow-800"
-                              : comanda.estado === "en_preparacion"
-                                ? "bg-blue-100 text-blue-800"
-                                : "bg-green-100 text-green-800"
+                              : "bg-green-100 text-green-800"
                           }`}
                         >
                           {comanda.estado}

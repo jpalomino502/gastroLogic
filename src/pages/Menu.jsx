@@ -397,4 +397,3 @@ function Menu({ menu, agregarPlato, editarPlato, eliminarPlato }) {
 }
 
 export default Menu;
-
