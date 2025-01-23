@@ -6,7 +6,7 @@ import Menu from "../components/home/Menu/Menu";
 import Comandas from "../components/home/Comandas/Comandas";
 import Cocina from "../components/home/Cocina/Cocina";
 
-function Home() {
+function Dashboard() {
   const [vista, setVista] = useState("resumen");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -40,4 +40,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default Dashboard;

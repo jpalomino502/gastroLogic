@@ -88,7 +88,7 @@ const Resumen = () => {
                 trend: "down",
               },
               {
-                bg: "bg-green-50",
+                bg: "bg-[#fff0f5]",
                 icon: <CheckCircle className="w-5 h-5 text-zinc-900" />,
                 title: "Finalizados",
                 value: 127,
