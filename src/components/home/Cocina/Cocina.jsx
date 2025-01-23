@@ -12,7 +12,6 @@ const Cocina = () => {
         { nombre: "Pizza Margherita", cantidad: 2 },
         { nombre: "Ensalada César", cantidad: 1 },
       ],
-      tiempoEstimado: 20,
     },
     {
       id: 2,
@@ -23,7 +22,6 @@ const Cocina = () => {
         { nombre: "Hamburguesa Clásica", cantidad: 1 },
         { nombre: "Papas Fritas", cantidad: 1 },
       ],
-      tiempoEstimado: 15,
     },
     {
       id: 3,
@@ -34,7 +32,6 @@ const Cocina = () => {
         { nombre: "Pasta Carbonara", cantidad: 1 },
         { nombre: "Tiramisú", cantidad: 1 },
       ],
-      tiempoEstimado: 0,
     },
   ];
 
@@ -66,7 +63,6 @@ const Cocina = () => {
                 <p className="text-sm text-gray-600 mb-2">
                   {comanda.mesa ? `Mesa: ${comanda.mesa}` : `Domicilio: ${comanda.direccion}`}
                 </p>
-                <p className="text-sm text-gray-600 mb-2">Tiempo estimado: {comanda.tiempoEstimado} min</p>
                 <ul className="list-disc list-inside text-sm mb-4 flex-grow">
                   {comanda.items.map((item, index) => (
                     <li key={index}>
