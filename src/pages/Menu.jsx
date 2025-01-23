@@ -29,7 +29,7 @@ const CategoryManager = ({ categories, addCategory, removeCategory }) => {
         />
         <button
           onClick={handleAddCategory}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+          className="px-4 py-2 bg-[#322d2e] text-white rounded-md hover:bg-[#1b1618] transition-colors"
         >
           Agregar
         </button>
@@ -38,12 +38,12 @@ const CategoryManager = ({ categories, addCategory, removeCategory }) => {
         {categories.map((category, index) => (
           <span
             key={index}
-            className="inline-flex items-center bg-blue-100 text-blue-800 rounded-full px-3 py-1 text-sm"
+            className="inline-flex items-center bg-[#afafaf] text-[#0A0104] rounded-full px-3 py-1 text-sm"
           >
             {category}
             <button
               onClick={() => removeCategory(category)}
-              className="ml-2 text-blue-600 hover:text-blue-800"
+              className="ml-2 text-[#1b1618] hover:text-[#0A0104]"
             >
               <Trash2 size={14} />
             </button>
