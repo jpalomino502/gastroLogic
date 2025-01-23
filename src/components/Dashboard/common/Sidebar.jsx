@@ -1,24 +1,32 @@
+// frontend/src/components/Dashboard/common/Sidebar.jsx
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import {
-  Home,
-  ClipboardList,
-  Utensils,
-  ChefHat,
-} from 'lucide-react';
+import { Home, ClipboardList, Utensils, ChefHat, LogOut } from "lucide-react"; // Agrega LogOut
+import { useNavigate } from "react-router-dom"; // Para redireccionar
+import { logout } from "../../../services/authService"; // Importa la función de logout
 
 function Sidebar({ isOpen, setVista, vista, toggleSidebar, setIsSidebarOpen }) {
   const [isHovered, setIsHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const navigate = useNavigate(); // Hook para redireccionar
 
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 1024);
     };
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
+
+  const handleLogout = async () => {
+    try {
+      await logout(); // Llama a la función de logout
+      navigate("/"); // Redirecciona a la página de inicio
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+    }
+  };
 
   const NavItem = ({ icon: Icon, label, view }) => (
     <motion.button
@@ -29,14 +37,12 @@ function Sidebar({ isOpen, setVista, vista, toggleSidebar, setIsSidebarOpen }) {
         if (isMobile) toggleSidebar();
       }}
       className={`flex items-center w-full p-3 rounded-xl transition-all duration-300 relative ${
-        vista === view
-          ? "text-white"
-          : "text-zinc-400 hover:text-white"
+        vista === view ? "text-white" : "text-zinc-400 hover:text-white"
       } ${isOpen || isHovered ? "justify-start" : "justify-center"}`}
     >
       <div className="flex items-center">
         <Icon className="h-5 w-5 min-w-[20px]" />
-        <span 
+        <span
           className={`ml-3 text-sm font-medium truncate transition-all duration-300 ${
             isOpen || isHovered ? "opacity-100 w-auto" : "opacity-0 w-0"
           }`}
@@ -49,10 +55,12 @@ function Sidebar({ isOpen, setVista, vista, toggleSidebar, setIsSidebarOpen }) {
       )}
     </motion.button>
   );
-  
+
   const sidebarContent = (
-    <div 
-      className={`h-full flex flex-col bg-zinc-900 rounded-r-2xl transition-all duration-300 ${isOpen || isHovered ? 'w-64' : 'w-20'}`}
+    <div
+      className={`h-full flex flex-col bg-zinc-900 rounded-r-2xl transition-all duration-300 ${
+        isOpen || isHovered ? "w-64" : "w-20"
+      }`}
       onMouseEnter={() => {
         if (!isMobile) {
           setIsHovered(true);
@@ -69,9 +77,11 @@ function Sidebar({ isOpen, setVista, vista, toggleSidebar, setIsSidebarOpen }) {
       <div className="flex items-center h-20 px-4 border-b border-zinc-800">
         <div className="flex items-center justify-center w-full">
           <Utensils className="h-8 w-8 text-white" />
-          <span className={`ml-3 text-xl font-bold text-white transition-all duration-300 ${
-            isOpen || isHovered ? "opacity-100 w-auto" : "opacity-0 w-0 overflow-hidden"
-          }`}>
+          <span
+            className={`ml-3 text-xl font-bold text-white transition-all duration-300 ${
+              isOpen || isHovered ? "opacity-100 w-auto" : "opacity-0 w-0 overflow-hidden"
+            }`}
+          >
             GastroLogic
           </span>
         </div>
@@ -105,12 +115,37 @@ function Sidebar({ isOpen, setVista, vista, toggleSidebar, setIsSidebarOpen }) {
           <NavItem icon={ChefHat} label="Cocina" view="cocina" />
         </div>
       </nav>
+
+      {/* Botón de Cerrar sesión */}
+      <div className="p-4 border-t border-zinc-800">
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={handleLogout}
+          className={`flex items-center w-full p-3 rounded-xl transition-all duration-300 text-zinc-400 hover:text-white ${
+            isOpen || isHovered ? "justify-start" : "justify-center"
+          }`}
+        >
+          <LogOut className="h-5 w-5 min-w-[20px]" />
+          <span
+            className={`ml-3 text-sm font-medium truncate transition-all duration-300 ${
+              isOpen || isHovered ? "opacity-100 w-auto" : "opacity-0 w-0"
+            }`}
+          >
+            Cerrar sesión
+          </span>
+        </motion.button>
+      </div>
     </div>
   );
 
   return (
     <>
-      <aside className={`fixed inset-y-0 left-0 z-50 transition-all duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 ${isOpen ? 'w-64' : 'w-20'}`}>
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 transition-all duration-300 ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        } lg:translate-x-0 ${isOpen ? "w-64" : "w-20"}`}
+      >
         {sidebarContent}
       </aside>
     </>
@@ -118,4 +153,3 @@ function Sidebar({ isOpen, setVista, vista, toggleSidebar, setIsSidebarOpen }) {
 }
 
 export default Sidebar;
-

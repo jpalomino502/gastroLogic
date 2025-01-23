@@ -1,14 +1,17 @@
+// frontend/src/components/Home/common/LoginModal.jsx
 import React, { useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { login } from "../../../services/authService"; // Importa el servicio de autenticación
+import { useNavigate } from "react-router-dom"; // Para redireccionar
 
 const LoginModal = ({ isOpen, setIsOpen }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const navigate = useNavigate(); // Hook para redireccionar
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,6 +19,7 @@ const LoginModal = ({ isOpen, setIsOpen }) => {
       const user = await login(email, password); // Llama al servicio de autenticación
       console.log("Usuario autenticado:", user);
       setIsOpen(false); // Cierra el modal
+      navigate("/dashboard"); // Redirecciona a /dashboard
     } catch (error) {
       setError(error.message); // Muestra el error
     }
