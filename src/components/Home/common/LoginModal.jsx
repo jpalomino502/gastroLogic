@@ -1,32 +1,74 @@
-// frontend/src/components/Home/common/LoginModal.jsx
 import React, { useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
-import { Eye, EyeOff } from "lucide-react";
-import { login } from "../../../services/authService"; // Importa el servicio de autenticación
-import { useNavigate } from "react-router-dom"; // Para redireccionar
+import { Eye, EyeOff, X } from "lucide-react";
+import { login, register } from "../../../services/authService"; // Importa las funciones de autenticación
+import { useNavigate } from "react-router-dom";
 
 const LoginModal = ({ isOpen, setIsOpen }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const navigate = useNavigate(); // Hook para redireccionar
+  const [isRegisterView, setIsRegisterView] = useState(false);
+  const [name, setName] = useState("");
+  const [restaurantName, setRestaurantName] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+
+    if (!email || !password) {
+      setError("Por favor, completa todos los campos.");
+      return;
+    }
+
     try {
-      const user = await login(email, password); // Llama al servicio de autenticación
-      console.log("Usuario autenticado:", user);
-      setIsOpen(false); // Cierra el modal
-      navigate("/dashboard"); // Redirecciona a /dashboard
+      const user = await login(email, password);
+      console.log("Usuario logueado:", user);
+
+      localStorage.setItem("uid", user.uid);
+
+      setIsOpen(false);
+      navigate("/dashboard");
     } catch (error) {
-      setError(error.message); // Muestra el error
+      setError(error.message || "Error al iniciar sesión. Verifica tus credenciales.");
+    }
+  };
+
+  const handleRegisterSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    if (!name || !restaurantName || !email || !password) {
+      setError("Por favor, completa todos los campos.");
+      return;
+    }
+
+    try {
+      const user = await register(name, restaurantName, email, password); 
+      console.log("Usuario registrado:", user);
+
+      localStorage.setItem("uid", user.uid);
+
+      setIsOpen(false);
+      navigate("/dashboard");
+    } catch (error) {
+      setError(error.message || "Error al registrar el usuario.");
     }
   };
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
+  };
+
+  const resetForm = () => {
+    setEmail("");
+    setPassword("");
+    setName("");
+    setRestaurantName("");
+    setError("");
   };
 
   return (
@@ -56,10 +98,53 @@ const LoginModal = ({ isOpen, setIsOpen }) => {
               leaveTo="opacity-0 scale-95"
             >
               <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-zinc-900 p-6 text-left align-middle shadow-xl transition-all">
+                <button
+                  onClick={() => {
+                    setIsOpen(false);
+                    resetForm();
+                  }}
+                  className="absolute top-4 right-4 text-zinc-400 hover:text-white focus:outline-none"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+
                 <Dialog.Title as="h3" className="text-2xl font-medium leading-6 text-[#e8dcec] mb-4">
-                  Iniciar sesión
+                  {isRegisterView ? "Registrarse" : "Iniciar sesión"}
                 </Dialog.Title>
-                <form onSubmit={handleSubmit} className="space-y-4">
+
+                <form onSubmit={isRegisterView ? handleRegisterSubmit : handleLoginSubmit} className="space-y-4">
+                  {isRegisterView && (
+                    <>
+                      <div>
+                        <label htmlFor="name" className="block text-sm font-medium text-[#d7ecd6]">
+                          Nombre
+                        </label>
+                        <input
+                          type="text"
+                          id="name"
+                          name="name"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          required
+                          className="mt-1 block w-full px-4 py-2 rounded-md bg-zinc-800 border-[#d7ecd6] shadow-sm focus:border-[#fff0f5] focus:ring focus:ring-[#fff0f5] focus:ring-opacity-50 text-[#e8dcec]"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="restaurantName" className="block text-sm font-medium text-[#d7ecd6]">
+                          Nombre del restaurante
+                        </label>
+                        <input
+                          type="text"
+                          id="restaurantName"
+                          name="restaurantName"
+                          value={restaurantName}
+                          onChange={(e) => setRestaurantName(e.target.value)}
+                          required
+                          className="mt-1 block w-full px-4 py-2 rounded-md bg-zinc-800 border-[#d7ecd6] shadow-sm focus:border-[#fff0f5] focus:ring focus:ring-[#fff0f5] focus:ring-opacity-50 text-[#e8dcec]"
+                        />
+                      </div>
+                    </>
+                  )}
                   <div>
                     <label htmlFor="email" className="block text-sm font-medium text-[#d7ecd6]">
                       Correo electrónico
@@ -100,12 +185,31 @@ const LoginModal = ({ isOpen, setIsOpen }) => {
                     </button>
                   </div>
                   {error && <p className="text-red-500 text-sm">{error}</p>}
+                  <div className="mt-4 flex justify-between">
+                    <button
+                      type="button"
+                      onClick={() => alert("Funcionalidad de olvidé mi contraseña")}
+                      className="text-sm text-[#d7ecd6] hover:text-[#fff0f5]"
+                    >
+                      Olvidé mi contraseña
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsRegisterView(!isRegisterView);
+                        resetForm();
+                      }}
+                      className="text-sm text-[#d7ecd6] hover:text-[#fff0f5]"
+                    >
+                      {isRegisterView ? "Iniciar sesión" : "Registrarse"}
+                    </button>
+                  </div>
                   <div className="mt-4">
                     <button
                       type="submit"
                       className="inline-flex justify-center w-full rounded-md border border-transparent bg-[#d7ecd6] px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-[#fff0f5] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#fff0f5] focus-visible:ring-offset-2"
                     >
-                      Iniciar sesión
+                      {isRegisterView ? "Registrarse" : "Iniciar sesión"}
                     </button>
                   </div>
                 </form>
