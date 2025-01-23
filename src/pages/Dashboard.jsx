@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Sidebar from "../components/common/Sidebar";
-import Header from "../components/common/Header";
+import Sidebar from "../components/Dashboard/common/Sidebar";
+import Header from "../components/Dashboard/common/Header";
 import Resumen from "../components/Dashboard/Resumen/Resumen";
 import Menu from "../components/Dashboard/Menu/Menu";
 import Comandas from "../components/Dashboard/Comandas/Comandas";
