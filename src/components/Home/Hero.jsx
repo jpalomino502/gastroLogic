@@ -3,7 +3,7 @@ import imageHero from "../../assets/Hero.png";
 
 const Hero = () => {
   return (
-    <div className="min-h-screen bg-zinc-900 flex items-center justify-center py-24 px-6 sm:px-12 lg:px-24">
+    <div className="min-h-screen bg-zinc-900 flex items-center justify-center py-16 px-6 sm:px-12 lg:px-24 mt-16 lg:mt-0">
       <div className="max-w-8xl mx-auto">
         <div className="flex flex-col lg:flex-row items-center justify-center gap-16 lg:gap-24">
           <div className="lg:w-1/2 text-[#e8dcec] space-y-10 text-center lg:text-left">

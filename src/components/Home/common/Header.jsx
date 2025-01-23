@@ -1,9 +1,9 @@
-import { useState } from "react"
-import { Link } from "react-router-dom"
-import LoginModal from "./LoginModal"
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import LoginModal from "./LoginModal";
 
 const Header = () => {
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   return (
     <header className="fixed w-full top-0 bg-zinc-900 text-[#e8dcec] py-6 z-50">
@@ -22,8 +22,7 @@ const Header = () => {
       </div>
       <LoginModal isOpen={isLoginModalOpen} setIsOpen={setIsLoginModalOpen} />
     </header>
-  )
-}
+  );
+};
 
-export default Header
-
+export default Header;
