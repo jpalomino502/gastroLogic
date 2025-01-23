@@ -1,32 +1,28 @@
 import React, { useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
-import { Eye, EyeOff } from "lucide-react"; // Importa los íconos de lucide-react
+import { Eye, EyeOff } from "lucide-react";
+import { login } from "../../../services/authService"; // Importa el servicio de autenticación
 
 const LoginModal = ({ isOpen, setIsOpen }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // Estado para mostrar/ocultar la contraseña
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Aquí iría la lógica de autenticación
-    console.log("Login attempt", { email, password });
-    setIsOpen(false);
-  };
-
-  const handleRegister = () => {
-    // Aquí iría la lógica para redirigir al usuario a la página de registro
-    console.log("Redirect to register page");
-  };
-
-  const handleForgotPassword = () => {
-    // Aquí iría la lógica para redirigir al usuario a la página de recuperación de contraseña
-    console.log("Redirect to forgot password page");
+    try {
+      const user = await login(email, password); // Llama al servicio de autenticación
+      console.log("Usuario autenticado:", user);
+      setIsOpen(false); // Cierra el modal
+    } catch (error) {
+      setError(error.message); // Muestra el error
+    }
   };
 
   const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword); // Cambia el estado para mostrar u ocultar la contraseña
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -79,7 +75,7 @@ const LoginModal = ({ isOpen, setIsOpen }) => {
                       Contraseña
                     </label>
                     <input
-                      type={showPassword ? "text" : "password"} // Cambia el tipo de input según el estado
+                      type={showPassword ? "text" : "password"}
                       id="password"
                       name="password"
                       value={password}
@@ -93,28 +89,13 @@ const LoginModal = ({ isOpen, setIsOpen }) => {
                       className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 mt-7"
                     >
                       {showPassword ? (
-                        <EyeOff className="h-5 w-5 text-[#d7ecd6]" /> // Ícono de ojo cerrado
+                        <EyeOff className="h-5 w-5 text-[#d7ecd6]" />
                       ) : (
-                        <Eye className="h-5 w-5 text-[#d7ecd6]" /> // Ícono de ojo abierto
+                        <Eye className="h-5 w-5 text-[#d7ecd6]" />
                       )}
                     </button>
                   </div>
-                  <div className="mt-4 flex justify-between">
-                    <button
-                      type="button"
-                      onClick={handleForgotPassword}
-                      className="text-sm text-[#d7ecd6] hover:text-[#fff0f5]"
-                    >
-                      Olvidé mi contraseña
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleRegister}
-                      className="text-sm text-[#d7ecd6] hover:text-[#fff0f5]"
-                    >
-                      Registrarse
-                    </button>
-                  </div>
+                  {error && <p className="text-red-500 text-sm">{error}</p>}
                   <div className="mt-4">
                     <button
                       type="submit"
