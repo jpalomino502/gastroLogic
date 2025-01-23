@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Toaster } from "react-hot-toast";
-import Sidebar from "./components/Sidebar";
-import Header from "./components/Header";
+import Sidebar from "./components/common/Sidebar";
+import Header from "./components/common/Header";
 import Resumen from "./pages/Resumen";
 import Menu from "./pages/Menu";
 import Comandas from "./pages/Comandas";

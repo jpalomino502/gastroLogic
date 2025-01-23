@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { PlusCircle, Pencil, Trash2, Search, Filter, ArrowUpDown, Tag } from 'lucide-react';
 import { toast } from "react-hot-toast";
-import { formatPrice } from "../utils/formatPrice";
 
 const CategoryManager = ({ categories, addCategory, removeCategory }) => {
   const [newCategory, setNewCategory] = useState("");
@@ -13,7 +12,13 @@ const CategoryManager = ({ categories, addCategory, removeCategory }) => {
       setNewCategory("");
     }
   };
-
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat("es-CO", {
+      style: "currency",
+      currency: "COP",
+      minimumFractionDigits: 0,
+    }).format(price)
+  }
   return (
     <div className="mb-4">
       <h3 className="text-lg font-semibold text-zinc-900 mb-2">

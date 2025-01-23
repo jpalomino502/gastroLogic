@@ -2,7 +2,6 @@ import React, { useState } from "react"
 import { motion } from "framer-motion"
 import { PlusCircle, MinusCircle, Trash2, ShoppingBag, MapPin, Search, Filter, X } from "lucide-react"
 import { toast } from "react-hot-toast"
-import { formatPrice } from "../utils/formatPrice"
 
 function Comandas({ menu, agregarComanda, comandas, actualizarEstadoComanda }) {
   const [comanda, setComanda] = useState({
@@ -12,6 +11,13 @@ function Comandas({ menu, agregarComanda, comandas, actualizarEstadoComanda }) {
     esDomicilio: false,
     direccion: "",
   })
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat("es-CO", {
+      style: "currency",
+      currency: "COP",
+      minimumFractionDigits: 0,
+    }).format(price)
+  }
   const [tabActiva, setTabActiva] = useState("nueva")
   const [searchTerm, setSearchTerm] = useState("")
   const [filterCategory, setFilterCategory] = useState("")
