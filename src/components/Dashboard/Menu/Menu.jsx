@@ -152,7 +152,7 @@ const Menu = ({ userId }) => {
                     </div>
                     <input
                       type="text"
-                      className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-12 pr-12 sm:text-sm border-gray-300 rounded-full h-10"
+                      className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-12 pr-12 sm:text-sm border-gray-300 rounded-md h-10"
                       placeholder="Buscar plato"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
@@ -165,7 +165,7 @@ const Menu = ({ userId }) => {
                       <Filter className="h-5 w-5 text-gray-400" />
                     </div>
                     <select
-                      className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-12 pr-12 sm:text-sm border-gray-300 rounded-full h-10"
+                      className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-12 pr-12 sm:text-sm border-gray-300 rounded-md h-10"
                       value={selectedCategory}
                       onChange={(e) => setSelectedCategory(e.target.value)}
                     >
