@@ -124,7 +124,7 @@ function App() {
               exit="out"
               variants={pageVariants}
               transition={pageTransition}
-              className="container mx-auto"
+              className="containercommon/"
             >
               {vista === "resumen" && (
                 <Resumen comandas={comandas} ganancias={ganancias} />
