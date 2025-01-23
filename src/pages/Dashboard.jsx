@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import Sidebar from "../components/common/Sidebar";
 import Header from "../components/common/Header";
-import Resumen from "../components/home/Resumen/Resumen";
-import Menu from "../components/home/Menu/Menu";
-import Comandas from "../components/home/Comandas/Comandas";
-import Cocina from "../components/home/Cocina/Cocina";
+import Resumen from "../components/Dashboard/Resumen/Resumen";
+import Menu from "../components/Dashboard/Menu/Menu";
+import Comandas from "../components/Dashboard/Comandas/Comandas";
+import Cocina from "../components/Dashboard/Cocina/Cocina";
 
 function Dashboard() {
   const [vista, setVista] = useState("resumen");
