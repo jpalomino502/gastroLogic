@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
-  HomeIcon,
-  ClipboardListIcon,
-  UtensilsIcon,
-  ChefHatIcon,
-} from "./Icons";
+  Home,
+  ClipboardList,
+  Utensils,
+  ChefHat,
+} from 'lucide-react';
 
 function Sidebar({ isOpen, setVista, vista, toggleSidebar, setIsSidebarOpen }) {
   const [isHovered, setIsHovered] = useState(false);
@@ -68,7 +68,7 @@ function Sidebar({ isOpen, setVista, vista, toggleSidebar, setIsSidebarOpen }) {
     >
       <div className="flex items-center h-20 px-4 border-b border-zinc-800">
         <div className="flex items-center justify-center w-full">
-          <UtensilsIcon className="h-8 w-8 text-white" />
+          <Utensils className="h-8 w-8 text-white" />
           <span className={`ml-3 text-xl font-bold text-white transition-all duration-300 ${
             isOpen || isHovered ? "opacity-100 w-auto" : "opacity-0 w-0 overflow-hidden"
           }`}>
@@ -99,10 +99,10 @@ function Sidebar({ isOpen, setVista, vista, toggleSidebar, setIsSidebarOpen }) {
 
       <nav className="flex-grow py-6">
         <div className="space-y-4">
-          <NavItem icon={HomeIcon} label="Resumen" view="resumen" />
-          <NavItem icon={ClipboardListIcon} label="Menú" view="menu" />
-          <NavItem icon={UtensilsIcon} label="Comandas" view="comandas" />
-          <NavItem icon={ChefHatIcon} label="Cocina" view="cocina" />
+          <NavItem icon={Home} label="Resumen" view="resumen" />
+          <NavItem icon={ClipboardList} label="Menú" view="menu" />
+          <NavItem icon={Utensils} label="Comandas" view="comandas" />
+          <NavItem icon={ChefHat} label="Cocina" view="cocina" />
         </div>
       </nav>
     </div>
