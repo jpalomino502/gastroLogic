@@ -6,7 +6,7 @@ import Dashboard from "./pages/Dashboard";
 function App() {
   return (
     <Router>
-      <div className="flex h-screen bg-zinc-900 text-gray-900">
+      <div className="flex bg-zinc-900 text-gray-900">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/dashboard" element={<Dashboard />} />
